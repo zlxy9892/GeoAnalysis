@@ -58,10 +58,10 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     for i in range(MAX_LOOP):
-        sess.run(train_step, feed_dict={xs: X_train, ys: y_train, keep_prob: 0.85})
+        sess.run(train_step, feed_dict={xs: X_train, ys: y_train, keep_prob: 0.8})
         if i % 50 == 0:
-            print('train error:\t', sess.run(loss, feed_dict={xs: X_train, ys: y_train, keep_prob: 1}))
-            print('test error:\t', sess.run(loss, feed_dict={xs: X_test, ys: y_test, keep_prob: 1}))
+            print('train error:\t', np.sqrt(sess.run(loss, feed_dict={xs: X_train, ys: y_train, keep_prob: 1})))
+            print('test error:\t', np.sqrt(sess.run(loss, feed_dict={xs: X_test, ys: y_test, keep_prob: 1})))
     
     print('RMSE: ', np.sqrt(sess.run(loss, feed_dict={xs: X_test, ys: y_test, keep_prob: 1})))
 
