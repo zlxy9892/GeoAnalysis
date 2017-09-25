@@ -9,7 +9,7 @@ from sklearn import model_selection
 
 ### ---------- hyperparameters ---------- ###
 LR = 0.01
-MAX_LOOP = 10000
+MAX_LOOP = 100000
 ### ---------- hyperparameters ---------- ###
 
 
@@ -26,13 +26,13 @@ def nn_layer(inputs, in_dim, out_dim, act=None):
 
 
 # load data
-np.random.seed(314)
 df = pd.read_csv('E:/data/xc/samples2.csv')
 X = df[['x', 'y', 'GEO', 'PLANC', 'PROFC', 'TWI', 'TEMPR', 'SLOPE']]
 y = df['SOMB']
 X = np.array(X)
 X = preprocessing.minmax_scale(X)
 y = np.array(y)[:, np.newaxis]
+np.random.seed(314)
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
 
 ### start ###
@@ -58,7 +58,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     for i in range(MAX_LOOP):
-        sess.run(train_step, feed_dict={xs: X_train, ys: y_train, keep_prob: 0.8})
+        sess.run(train_step, feed_dict={xs: X_train, ys: y_train, keep_prob: 0.85})
         if i % 50 == 0:
             print('train error:\t', np.sqrt(sess.run(loss, feed_dict={xs: X_train, ys: y_train, keep_prob: 1})))
             print('test error:\t', np.sqrt(sess.run(loss, feed_dict={xs: X_test, ys: y_test, keep_prob: 1})))
