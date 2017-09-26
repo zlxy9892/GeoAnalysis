@@ -31,13 +31,23 @@ for number in numberList:
 
 plt.scatter(numberList, rmseList)
 
-#for i in range(10):
-#    X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
-#    regr = ensemble.RandomForestRegressor(n_estimators=100) #max_depth=2
-#    regr.fit(X_train, y_train)
-#    y_test_pred = regr.predict(X_test)
-#    mse = metrics.mean_squared_error(y_true=y_test, y_pred=y_test_pred)
-#    rmse = np.sqrt(mse)
-#    rmseList.append(rmse)
-#rmse_mean = np.mean(rmseList)
-#print(rmse_mean)
+### 将训练集与测试集根据空间位置划分，南北两侧的样点 ###
+ix_train = X[:,1] > 3412889.8694
+X_train = X[ix_train]
+y_train = y[ix_train]
+ix_test = ix_train[:]
+for i in range(len(ix_test)):
+    ix_test[i] = not ix_test[i]
+X_test = X[ix_test]
+y_test = y[ix_test]
+### 将训练集与测试集根据空间位置划分，南北两侧的样点 ###
+
+#X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
+
+regr = ensemble.RandomForestRegressor(n_estimators=100, max_depth=4, min_samples_split=2)
+regr.fit(X_train, y_train)
+y_test_pred = regr.predict(X_test)
+mse = metrics.mean_squared_error(y_test, regr.predict(X_test))
+rmse = np.sqrt(mse)
+print('RMSE:\t', rmse)
+
