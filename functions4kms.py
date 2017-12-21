@@ -40,15 +40,20 @@ def getNearestElemsIds(df, sampleLocations, xname='x', yname='y'):
     return index
 
 def showSampleLocByNearestFeatures(df, X, centers, xname='x', yname='y'):
+    df_loc = []
     for center in centers:
         id = np.argmin(calcDist(X, center, sum_axis=1))
-        print(str(df[xname][id]) + ',' + str(df[yname][id]))
+        #print(str(df[xname][id]) + ',' + str(df[yname][id]))
+        print(str(X[id][0]) + ',' + str(X[id][1]))
+        df_loc.append([df[xname][id], df[yname][id]])
+    return df_loc
 
 # constraint k-means clustering
 def ckms(X, n_clusters, prior=None, max_iter=50, tol=1e-4, ntry=1, trace=False):
     if trace:
         print('start ckms...')
     # init variables
+    bestCenters = []
     centers = []
     isFixed = []
     if prior is not None:
@@ -78,29 +83,15 @@ def ckms(X, n_clusters, prior=None, max_iter=50, tol=1e-4, ntry=1, trace=False):
             for i in range(len(X)):
                 id_cate = np.argmin(calcDist(X[i], centers, sum_axis=1))
                 categories_tmp[i] = id_cate
-#                dist_min = 10.0**100
-#                for j in range(len(centers)):
-#                    dist_tmp = calcDist(X[i], centers[j])
-#                    if dist_min > dist_tmp:
-#                        dist_min = dist_tmp
-#                        categories_tmp[i] = j
-#                dist_sum_tmp += dist_min
-#            if trace:
-#                print('iter:', iterTime+1, ' dist_sum_tmp:', dist_sum_tmp)
             # update centers (M step)
             isNoMove = True
             for j in range(len(centers)):
                 if isFixed[j]:
                     continue
-                #featSum = np.array([0.0 for n in range(X.shape[1])])
-                #count = 0
                 belong_center_ids = np.where(categories_tmp == j)
+                if len(belong_center_ids[0]) <= 0:
+                    continue
                 newCenter = np.mean(X[belong_center_ids], axis=0)
-#                for i in range(len(X)):
-#                    if categories_tmp[i] == j:
-#                        featSum += X[i]
-#                        count += 1
-#                newCenter = featSum / count
                 oldCenter = centers[j]
                 if calcDist(oldCenter, newCenter) > tol:
                     isNoMove = False
@@ -123,13 +114,15 @@ def ckms(X, n_clusters, prior=None, max_iter=50, tol=1e-4, ntry=1, trace=False):
         if dist_sum_min > dist_sum_tmp:
             dist_sum_min = dist_sum_tmp
             categories = categories_tmp
+            bestCenters = centers
         if trace:
             print('### try time:', tryTime+1, ' dist_sum_tmp:', dist_sum_tmp, ' dist_sum_min:', dist_sum_min, '###')
     if trace:
         print('cluster done')
     res = []
-    res.append(centers)
+    res.append(bestCenters)
     res.append(categories)
+    res.append(dist_sum_min)
     return res
 
 

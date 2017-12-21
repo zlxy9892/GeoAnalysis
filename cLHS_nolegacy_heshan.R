@@ -6,10 +6,10 @@ source('Functions4SSA.R')
 
 # Read grid with covariates
 # for raffelson dataset
-grd<-read.csv(file="./data/envdata_raf_norm.csv",header=TRUE)
+#grd<-read.csv(file="./data/envdata_raf.csv",header=TRUE)
 
 # for heshan dataset
-#grd<-read.csv(file="./data/envdata_hs.csv",header=TRUE)
+grd<-read.csv(file="./data/envdata_hs.csv",header=TRUE)
 
 head(grd)
 
@@ -23,13 +23,12 @@ grd$y <- cellsize * round(grd$y/cellsize, 0)
 
 # In which columns are the coordinates and covariates?
 # for raffelson dataset 
-col.xy <- c(1,2)
+#col.xy <- c(1,2)
 #col.cov <- c(3,4,5,6,7,8,9)
-col.cov <- c(4,5)
 
 # for heshan dataset 
-#col.xy <- c(1,2)
-#col.cov <- c(3,4,5,6)
+col.xy <- c(1,2)
+col.cov <- c(3,4,5,6)
 
 # Compute population correlation matrix of covariates
 R<-cor(grd[,col.cov])
@@ -49,7 +48,7 @@ grid <- SpatialPixelsDataFrame(
 
 # Select spatial infill sample which is used as initial sample in annealing
 set.seed(314)
-samplesize<-10 #number of additional points
+samplesize<-50 #number of additional points
 #ntot <- samplesize+length(legacy)
 ntot <- samplesize
 
@@ -101,11 +100,7 @@ load(file="LHSample_0_(0.5)_raf.Rdata")
 
 # show the location of samples
 annealingResult$optSample@coords
-write.csv(annealingResult$optSample@coords, file=paste('./data/result/test6/cLHS_0+',samplesize,'.csv', sep=''), row.names = F, quote = F)
-
-optSample<-as(annealingResult$optSample, "data.frame")
-coordinates(optSample)<-~x+y
-optSample <- over(optSample, grid)
+write.csv(annealingResult$optSample@coords, file=paste('./data/result/test5/cLHS_0+',samplesize,'.csv', sep=''), row.names = F, quote = F)
 
 # optSample<-as(annealingResult$optSample, "data.frame")
 # Eall<-annealingResult$Criterion
